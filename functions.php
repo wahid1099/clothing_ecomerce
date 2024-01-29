@@ -49,7 +49,12 @@ function addCart()
         } else {
             $query = "Insert into cart (products_id, ip_add, qty, size, date, c_id) values('$p_id','$ip_add','$qty','$size',NOW(),'$c_id')";
             $run_query = mysqli_query($db, $query);
-            echo "<script>window.open('product.php?product_id=$p_id','_self')</script>";
+          //  echo "<script>window.open('product.php?product_id=$p_id','_self')</script>";
+            if (isset($_POST['action']) && $_POST['action'] === 'buy_now') {
+                echo "<script>window.open('check-out.php','_self')</script>"; // Redirect to the checkout page
+            } else {
+                echo "<script>window.open('product.php?product_id=$p_id','_self')</script>";
+            }
         }
     }
 }

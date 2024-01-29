@@ -52,7 +52,7 @@ include('header.php');
                         <form action='product.php?add_cart=<?php if (isset($_GET['product_id'])) {
                                                                 $product_id = $_GET['product_id'];
                                                                 echo $product_id;
-                                                            } ?>' method='post'>
+                                                            } ?>' method='post' id="productForm">
 
                             <div class="form-group">
                                 <!-- form-group Begin -->
@@ -85,7 +85,11 @@ include('header.php');
                                 </div>
                                 <p id="msg"></p>
                             </div><!-- form-group Finish -->
-                            <button class='btn primary-btn pd-cart' id='cartbtn' style='margin-top: 20px;'> Add to cart</button>
+                            <input type="hidden" name="action" id="action" value="add_to_cart"> <!-- Default action is add to cart -->
+
+                            <button class='btn primary-btn pd-cart' id='cartbtn' style='margin-top: 20px;'> কার্ট অ্যাড করুন</button>
+                            <button class='btn primary-btn ' id='buy_now' name='buy_now' style='margin-top: 20px;'> অর্ডার করুন
+</button>
                          
                         </form>
 
@@ -125,20 +129,60 @@ include('footer.php');
 ?>
 
 <script>
-    $("#cartbtn").on('click', function() {
-        var atLeastOneChecked = false;
-        if (!$("input[name='size']").is(':checked')) {
+    // $("#cartbtn").on('click', function() {
+    //     var atLeastOneChecked = false;
+    //     if (!$("input[name='size']").is(':checked')) {
 
-            $("#msg").html(
-                "<span class='alert alert-danger'>" +
-                "Please Choose Size </span>");
+    //         $("#msg").html(
+    //             "<span class='alert alert-danger'>" +
+    //             "Please Choose Size </span>");
+    //     } else {
+    //         $("#msg").html("<span class='alert alert-success'>Product added to the cart successfully!</span>");
+
+    //         return;
+    //     }
+
+    // });
+
+    // $("#buy_now").on('click', function() {
+    //     var atLeastOneChecked = false;
+    //     if (!$("input[name='size']").is(':checked')) {
+
+    //         $("#msg").html(
+    //             "<span class='alert alert-danger'>" +
+    //             "Please Choose Size </span>");
+    //     } else {
+           
+
+    //         return;
+    //     }
+
+    // });
+
+    function updateMessage(message, type) {
+    $("#msg").html("<span class='alert " + type + "'>" + message + "</span>");
+}
+
+$("#cartbtn, #buy_now").on('click', function() {
+    if (!$("input[name='size']").is(':checked')) {
+        updateMessage("Please Choose Size", "alert-danger");
+    } else {
+        updateMessage("Product added to the cart successfully!", "alert-success");
+    }
+});
+
+
+    document.getElementById('productForm').addEventListener('submit', function (event) {
+        var actionInput = document.getElementById('action');
+        console.log("Button clicked");
+
+        if (event.submitter && event.submitter.name === 'buy_now') {
+            actionInput.value = 'buy_now';
         } else {
-            $("#msg").html("<span class='alert alert-success'>Product added to the cart successfully!</span>");
-
-            return;
+            actionInput.value = 'add_to_cart';
         }
-
     });
+
 </script>
 
 </body>

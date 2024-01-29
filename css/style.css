@@ -150,6 +150,15 @@ ol {
 }
 
 /* buttons */
+#buybtn {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 30px;
+  color: #ffffff;
+  background: #0c2d57;
+  text-transform: uppercase;
+}
 
 .primary-btn {
   display: inline-block;
@@ -171,7 +180,6 @@ ol {
   padding: 13px 45px 11px;
   cursor: pointer;
 }
-
 
 /* Preloder */
 /* Page Preloader Section */
@@ -824,7 +832,7 @@ ol {
 }
 
 .hero-items .owl-item.active .single-hero-items span {
-    transition: all 0.2s ease 0.2s;
+  transition: all 0.2s ease 0.2s;
 }
 
 .hero-items .owl-item.active .single-hero-items h1 {
@@ -885,7 +893,7 @@ ol {
   content: "";
   opacity: 0.3;
   width: calc(100% - 70px);
-  height: calc(100% - 60px);  
+  height: calc(100% - 60px);
   transform: scale(0);
   transition: all 0.3s;
 }
