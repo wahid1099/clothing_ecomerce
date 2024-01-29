@@ -4,7 +4,8 @@ include('../db.php');
 include("auth_check.php");
 
 // Fetch all products from the database
-$query = "SELECT * FROM orders";
+$query = "SELECT * FROM orders ORDER BY order_id DESC";
+
 $result = mysqli_query($con, $query);
 
 
@@ -56,8 +57,8 @@ if (!$result) {
     <tbody>
         <?php
         // Fetch orders from the database
-        $query = "SELECT * FROM orders";
-        $result = mysqli_query($con, $query);
+        // $query = "SELECT * FROM orders";
+        // $result = mysqli_query($con, $query);
 
         // Loop through the orders and display them in the table
         while ($row = mysqli_fetch_assoc($result)) {
