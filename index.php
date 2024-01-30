@@ -11,65 +11,37 @@ include("header.php");
 <section class="hero-section">
     <div class="hero-items owl-carousel">
 
-        <?php
+    <?php
 
-        $get_slides = "select * from slider LIMIT 0,1";
-        $run_slider = mysqli_query($con, $get_slides);
+$get_slides = "SELECT * FROM slider";
+$run_slider = mysqli_query($con, $get_slides);
 
-        while ($row_slides = mysqli_fetch_array($run_slider)) {
+while ($row_slides = mysqli_fetch_array($run_slider)) {
+    $slide_name = $row_slides['slide_name'];
+    $slide_image = $row_slides['slide_image'];
+    $slide_heading = $row_slides['slide_heading'];
+    $slide_text = $row_slides['slide_text'];
 
-            $slide_name = $row_slides['slide_name'];
-            $slide_image = $row_slides['slide_image'];
-            $slide_heading = $row_slides['slide_heading'];
-            $slide_text = $row_slides['slide_text'];
-
-            echo "
-
-            <div class='single-hero-items set-bg' data-setbg='img/$slide_image'>
-                <div class='container'>
-                    <div class='row'>
-                        <div class='col-lg-5'>
-                            <h1>$slide_heading</h1>
-                            <p>$slide_text
-                            </p>
-                            <a href='shop.php' class='primary-btn'>Shop Now</a>
-                        </div>
+    echo "
+        <div class='single-hero-items set-bg' data-setbg='img/$slide_image'>
+            <div class='container'>
+                <div class='row'>
+                    <div class='col-lg-5'>
+                        <h1>$slide_heading</h1>
+                        <p>$slide_text</p>
+                        <a href='shop.php' class='primary-btn'>Shop Now</a>
                     </div>
-                    <div class='off-card'>
-                        <h2>Up to <span>60%</span></h2>
-                    </div>  
                 </div>
+                <div class='off-card'>
+                <h2>Up to <span>60%</span></h2>
+            </div>  
             </div>
-                ";
-        }
+        </div>
+    ";
+}
 
+?>
 
-        $get_slides = "select * from slider LIMIT 1,2";
-        $run_slider = mysqli_query($con, $get_slides);
-
-        while ($row_slides = mysqli_fetch_array($run_slider)) {
-
-            $slide_name = $row_slides['slide_name'];
-            $slide_image = $row_slides['slide_image'];
-            $slide_heading = $row_slides['slide_heading'];
-            $slide_text = $row_slides['slide_text'];
-
-            echo "
-            <div class='single-hero-items set-bg' data-setbg='img/$slide_image'>
-                <div class='container'>
-                    <div class='row'>
-                        <div class='col-lg-5'>
-                            <h1 style='color: white;'>$slide_heading</h1>
-                            <p style='color: white;'>$slide_text
-                            </p>
-                            <a href='shop.php' class='primary-btn'>Shop Now</a>
-                        </div>
-                    </div>
-                </div>
-            </div>";
-        }
-
-        ?>
 
     </div>
 </section>

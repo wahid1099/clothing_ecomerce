@@ -39,7 +39,8 @@ if (!$result) {
         <?php include 'inclueds/sidebar.php'; ?>
         </div>
         <div class="col-lg-12" id="main">
-        <h1>All Category</h1>
+        <h1>SLider</h1>
+        <h3 class="text-danger fw-bold ">*Note :Please upload 1280*720  size image.</h3><br>
         <table class="table table-striped table-bordered">
     <thead>
         <tr>
@@ -48,6 +49,7 @@ if (!$result) {
             <th scope="col">Slider Heading</th>
             <th scope="col">Slider Image</th>
             <th scope="col">Slider Description</th>
+            <th scope="col">Action</th>
            
           
         </tr>
