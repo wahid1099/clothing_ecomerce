@@ -14,6 +14,8 @@ $result = mysqli_query($con, $query);
 if (!$result) {
     die("Query failed: " . mysqli_error($con));
 }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -28,6 +30,7 @@ if (!$result) {
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- toast -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
 
 
 </head>
@@ -40,7 +43,7 @@ if (!$result) {
         </div>
         <div class="col-lg-12" id="main">
         <h1>All Orders</h1>
-        <table class="table table-striped table-bordered">
+        <table id="AllorderTable" class="table table-striped table-bordered">
     <thead>
         <tr>
             <th scope="col">Order ID</th>
@@ -108,9 +111,21 @@ if (!$result) {
     </script>
     <!-- toast -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+      <!-- jQuery -->
+      <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+    <!-- DataTables JS -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js">
+
+    </script>
    
 
 <script>
+      $(document).ready(function() {
+        $('#AllorderTable').DataTable(
+            { "order": [[0, "desc"]]}
+        );
+    });
 function updateStatus(orderId, newStatus) {
     $.ajax({
         type: 'POST',

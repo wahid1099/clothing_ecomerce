@@ -23,7 +23,7 @@ if (!$result) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Orders</title>
+    <title>Product stock</title>
     <link rel="stylesheet" href="inclueds/sidebar.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -123,7 +123,7 @@ if (!$result) {
     Add Product Variation
 </button>
         
-        <h1>All Products</h1>
+        <h1>Product Stock And variations</h1>
         <table id="productTable" class="table table-striped table-bordered">
     <thead>
         <tr>
@@ -134,6 +134,7 @@ if (!$result) {
             <th scope="col">color</th>
             <th scope="col">Stock</th>
             <th scope="col">Image</th>
+            <th scope="col">Actions</th>
             
         </tr>
     </thead>
@@ -155,7 +156,15 @@ if (!$result) {
             echo '<td>' . $row['stock_quantity'] . '</td>';
             echo '<td><img src="' . $imagePath . '" alt="Product Image" style="max-width: 100px;"></td>';
 
-           
+            echo '<td>'; 
+            echo '<button type="button" class="btn btn-warning " style="margin: 10px;" data-toggle="modal" data-target="#updateModal' . $row['variation_id'] . '">Update</button>'; 
+            echo '<button type="button" class="btn btn-danger " data-toggle="modal" data-target="#deleteModal' . $row['variation_id'] . '">Delete</button>';
+            echo '</td>';
+
+            // Include modals for Update and Delete
+            include('update_modal.php'); // Create a separate PHP file for the update modal
+            include('delete_modal.php'); // Create a separate PHP file for the delete modal
+
             
            
             echo '</tr>';
@@ -188,10 +197,53 @@ if (!$result) {
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script>
     $(document).ready(function() {
-        $('#productTable').DataTable();
+        $('#productTable').DataTable({
+            "destroy": true 
+        }
+            
+        );
     });
-</script>
 
+    function confirmDelete(variationId) {
+    $.ajax({
+        type: 'GET',
+        url: 'delete_variation.php',
+        data: { delete_variation: variationId },
+        success: function (data) {
+            if (data.status === 'success') {
+                showToast(data.message);
+               
+               // location.reload(true); // Reload the page with a hard refresh
+                setTimeout(function () {
+                    location.reload(true); // Reload the page with a hard refresh
+                }, 1000);
+            } else {
+                showToast(data.message);
+            }
+        },
+        error: function (error) {
+            console.error('Error deleting product variation:', error);
+            showToast('Error deleting product variation');
+        }
+    });
+}
+
+
+function showToast(message) {
+    Toastify({
+                text: message,
+                duration: 3000,
+                newWindow: true,
+                close: true,
+                gravity: 'top', // `top` or `bottom`
+                position: 'right', // `left`, `center` or `right`
+                backgroundColor: '#65B741', // Green color for success
+                onClick: function () {
+                    // Callback after click, you can redirect or perform additional actions here
+                }
+            }).showToast();
+    }
+</script>
 </body>
 
 </html>

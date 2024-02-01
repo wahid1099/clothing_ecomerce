@@ -139,6 +139,8 @@ if (!$result) {
                 <th scope="col">Product Category</th>
                 <th scope="col">Category</th>
                 <th scope="col">Product Description</th>
+                <th scope="col">Product CODE</th>
+                <th scope="col">Discount percentage</th>
                 <th scope="col">Product Keyword</th>
                 <th scope="col">Date</th>
                 <th scope="col">Action</th>
@@ -174,6 +176,9 @@ if (!$result) {
                  echo "<td>{$row['category_title']}</td>";
 
                 echo '<td>' . $row['product_desc'] . '</td>';
+               
+                echo '<td>' . $row['product_code'] . '</td>';
+                echo '<td>' . $row['discount_percentage'] . '</td>';
                 echo '<td>' . $row['product_keywords'] . '</td>';
                 echo '<td>' . $row['date'] . '</td>';
                 echo '<td>';
