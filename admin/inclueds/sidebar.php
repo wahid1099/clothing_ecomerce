@@ -6,6 +6,8 @@
   <a  href="./insert-product.php"><i class="fa fa-plus-square" aria-hidden="true"></i> Add Prodcuts</a>
   <a href="./all-Products.php"><i class="fa fa-list-ol" aria-hidden="true"></i> All Products</a>
   <a href="./allorder.php"><i class="fa fa-shopping-bag" aria-hidden="true"></i> All Orders</a>
+  <a  href="./product_stock.php"><i class="fa fa-plus-square" aria-hidden="true"></i> Add Stock</a>
+
 
  <a href="./allcategories.php"><i class="fa fa-tags" aria-hidden="true"></i> All Categories</a>
 

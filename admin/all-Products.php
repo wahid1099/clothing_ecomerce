@@ -31,8 +31,9 @@ if (!$result) {
     <!-- toast -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
-    <!-- datatables -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+
+    <!-- datatable -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
 
 </head>
 
@@ -127,7 +128,7 @@ if (!$result) {
         </div>
         <div class="col-lg-12" id="main">
     <h2>All Products</h2>
-    <table class="table table-striped table-bordered">
+    <table id="ALLproductTable" class="table table-striped table-bordered">
         <thead>
             <tr>
                 <th scope="col">Id</th>
@@ -203,9 +204,7 @@ if (!$result) {
 
     </div>
     
-     <!-- datatable -->
-     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
-     <!-- datatable -->
+     
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -216,11 +215,16 @@ if (!$result) {
         });
     </script>
     <!-- toast -->
+   
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
- 
 
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 
 <script>
+$(document).ready(function() {
+        $('#ALLproductTable').DataTable();
+    });
+
    $(document).ready(function () {
     // Check if the "deleted" session variable is set
     var isProductDeleted = <?php echo isset($_SESSION['deletion_status']) ? 'true' : 'false'; ?>;
