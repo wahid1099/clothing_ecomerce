@@ -164,6 +164,61 @@ include("auth_check.php");
                         </div>
 
                         <div class="form-group">
+                            <label class="col-md-3 control-label">Product Code</label>
+
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="product_Code" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Discount Percentage</label>
+
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="discount_percent" required>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Product Color</label>
+
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="product_Color" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Stock Quantity</label>
+
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="product_stock" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="size" class="col-md-3 control-label">Size:</label>
+                            <div class="col-md-6">
+                            <select class="form-control" id="size" name="size" required>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
+                                <option value="XXXL">XXXL</option>
+                                <option value="28">28</option>
+                                <option value="30">30</option>
+                                <option value="32">32</option>
+                                <option value="34">34</option>
+                                <option value="36">36</option>
+                                <option value="38">38</option>
+                                <option value="40">40</option>
+                                <option value="42">42</option>
+                            </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label class="col-md-3 control-label">Product Description</label>
 
                             <div class="col-md-6">
@@ -219,6 +274,11 @@ if (isset($_POST['submit'])) {
     $product_price = $_POST['product_price'];
     $product_keywords = $_POST['product_keywords'];
     $product_desc = $_POST['product_desc'];
+    $product_code = $_POST['product_Code'];
+    $product_color = $_POST['product_Color'];
+    $product_size = $_POST['size'];
+    $product_stock_qty = $_POST['product_stock'];
+    $discount_percent = $_POST['discount_percent'];
 
     $uploadDirectory = '../img/products/';
 
@@ -226,6 +286,9 @@ if (isset($_POST['submit'])) {
     if (!is_dir($uploadDirectory)) {
         mkdir($uploadDirectory, 0755, true);
     }
+
+    $product_img1 = $product_code . '_' . $product_img1;
+    $product_img2 = $product_code . '_' . $product_img2;
 
     $temp_name1 = $_FILES['product_img1']['tmp_name'];
     $temp_name2 = $_FILES['product_img2']['tmp_name'];
@@ -237,30 +300,29 @@ if (isset($_POST['submit'])) {
     move_uploaded_file($temp_name2, $uploadDirectory . $product_img2);
 
 
-    // $temp_name1 = $_FILES['product_img1']['tmp_name'];
-    // $temp_name2 = $_FILES['product_img2']['tmp_name'];
 
-    // move_uploaded_file($temp_name1, "img/products/$product_img1");
-    // move_uploaded_file($temp_name2, "img/products/$product_img2");
-
-    $insert_product = "Insert into products (p_cat_id,cat_id,date,product_title,product_img1,product_img2,product_price,product_keywords,product_desc)
-    values ('$p_cat_id','$cat_id',NOW(),'$product_title','$product_img1','$product_img2','$product_price','$product_keywords','$product_desc')";
+    $insert_product = "Insert into products (p_cat_id,cat_id,date,product_title,product_img1,product_img2,product_price,product_keywords,product_desc,product_code,	discount_percentage)
+    values ('$p_cat_id','$cat_id',NOW(),'$product_title','$product_img1','$product_img2','$product_price','$product_keywords','$product_desc','$product_code',' $discount_percent')";
 
     $run_insert_product = mysqli_query($con, $insert_product);
 
-    // if ($run_insert_product) {
-    //     echo "<script>alert('Product Inserted')</script>";
-    //     echo "<script>window.open('insert-product.php','_self')</script>";
-    // }
+   
 
     if ($run_insert_product) {
-        // Show Toastify notification for success
-        echo "<script>
-            Toastify({
-                text: 'Product Inserted',
-                duration: 3000,
-                newWindow: true,
-                close: true,
+        $product_id = mysqli_insert_id($con);
+
+        $run_insert_variations = "INSERT INTO product_variations (products_id, color, size, stock_quantity,image_url)
+        VALUES ('$product_id', '$product_color', '$product_size', '$product_stock_qty', '$product_img1')";
+        $run_insert_variations_result = mysqli_query($con, $run_insert_variations);
+
+        if ($run_insert_variations_result) {
+            // Show Toastify notification for success
+            echo "<script>
+                    Toastify({
+                        text: 'Product Inserted with Variations',
+                        duration: 3000,
+                        newWindow: true,
+                        close: true,
                 gravity: 'top', // `top` or `bottom`
                 position: 'right', // `left`, `center` or `right`
                 backgroundColor: '#65B741', // Green color for success
@@ -268,18 +330,19 @@ if (isset($_POST['submit'])) {
                     // Callback after click, you can redirect or perform additional actions here
                 }
             }).showToast();
-    
+
             // Redirect to 'insert-product.php' after 2 seconds
             setTimeout(function () {
                 window.open('insert-product.php', '_self');
             }, 2000);
         </script>";
+        } else {
+            // Handle the case where the product variations insertion failed
+            echo "Error: " . mysqli_error($con);
+        }
+        } else {
+        // Handle the case where the main product insertion failed
+        echo "Error: " . mysqli_error($con);
+        }
     }
-    
-    
-    
-    
-    
-}
-
 ?>

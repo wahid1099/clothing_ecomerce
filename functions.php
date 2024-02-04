@@ -1,7 +1,14 @@
 <?php
 
+
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 $db = mysqli_connect('localhost', 'root', '', 'threaderz_store');
 
+echo '<script src="./js/product.js"></script>';
 
 function getRealIpUser()
 {
@@ -37,25 +44,38 @@ function addCart()
         $p_id = $_GET['add_cart'];
         $qty = $_POST['product_qty'];
         $size = $_POST['size'];
-
-        $check_product = "select * from cart where c_id = '$c_id' AND products_id = '$p_id'";
-        $run_check = mysqli_query($db, $check_product);
+        $color = $_POST['color'];
+       // Redirect to the checkout page
 
      
+       $variant_query = "SELECT variation_id FROM product_variations WHERE products_id = '$p_id' AND size = '$size' AND color = '$color'";
+       $run_variant_query = mysqli_query($db, $variant_query);
+            
+        if ($run_variant_query && $variant_row = mysqli_fetch_assoc($run_variant_query)) {
+          $variant_id = $variant_row['variation_id'];
+          
 
-        if (mysqli_num_rows($run_check) > 0) {
-            echo "<script>alert('Product already added.')</script>";
-            echo "<script>window.open('product.php?product_id=$p_id','_self')</script>";
-        } else {
-            $query = "Insert into cart (products_id, ip_add, qty, size, date, c_id) values('$p_id','$ip_add','$qty','$size',NOW(),'$c_id')";
-            $run_query = mysqli_query($db, $query);
-          //  echo "<script>window.open('product.php?product_id=$p_id','_self')</script>";
-            if (isset($_POST['action']) && $_POST['action'] === 'buy_now') {
-                echo "<script>window.open('check-out.php','_self')</script>"; // Redirect to the checkout page
-            } else {
+             $check_product = "SELECT * FROM cart WHERE c_id = '$c_id' AND products_id = '$p_id' AND variant_id = '$variant_id'";
+               $run_check = mysqli_query($db, $check_product);
+                    
+            if (mysqli_num_rows($run_check) > 0) {
+                $update_query = "UPDATE cart SET qty = qty + '$qty' WHERE c_id = '$c_id' AND products_id = '$p_id'  AND variant_id = '$variant_id'";
+                $run_update = mysqli_query($db, $update_query);
+    
                 echo "<script>window.open('product.php?product_id=$p_id','_self')</script>";
+            } else {
+              
+                $query = "INSERT INTO cart (products_id, variant_id, ip_add, qty, size, color, date, c_id) VALUES ('$p_id', '$variant_id', '$ip_add', '$qty', '$size', '$color', NOW(), '$c_id')";
+                $run_query = mysqli_query($db, $query);
+                if (isset($_POST['action']) && $_POST['action'] === 'buy_now') {
+                    echo "<script>window.open('check-out.php','_self')</script>"; // Redirect to the checkout page
+                } else {
+                    echo "<script>window.open('product.php?product_id=$p_id','_self')</script>";
+                }
             }
-        }
+    
+    }
+
     }
 }
 
@@ -65,7 +85,7 @@ function getWProduct()
 {
     global $db;
 
-    $get_products = "select * from products where cat_id=2 order by RAND() LIMIT 7";
+    $get_products = "select * from products where  p_cat_id=1 order by RAND() LIMIT 7";
     $run_products = mysqli_query($db, $get_products);
 
 
@@ -109,7 +129,7 @@ function getMProduct()
 {
     global $db;
 
-    $get_products = "select * from products where cat_id=1 order by RAND() LIMIT 7";
+    $get_products = "select * from products where p_cat_id=3 order by RAND() LIMIT 7";
     $run_products = mysqli_query($db, $get_products);
 
 
@@ -179,20 +199,20 @@ function getCat()
 
     global $db;
 
-    $get_cats = "select * from category";
+    $get_cats = "select * from product_categories";
     $run_cats = mysqli_query($db, $get_cats);
 
 
 
     while ($row_cats = mysqli_fetch_array($run_cats)) {
 
-        $cat_id = $row_cats['cat_id'];
-        $cat_title = $row_cats['cat_title'];
+        $cat_id = $row_cats['p_cat_id'];
+        $cat_title = $row_cats['p_cat_title'];
 
 
         echo "
 
-        <li class='hovclass'><a href='shop.php?cat_id=$cat_id'>$cat_title</a></li>
+        <li class='hovclass'><a href='shop.php?p_cat_id=$cat_id'>$cat_title</a></li>
 
         ";
     }
@@ -338,6 +358,23 @@ function getcatProd()
         }
     }
 }
+function areAllVariantsOutOfStock($product_id) {
+    global $db; // Assuming $db is your database connection
+
+    // Your database query to check if all variants are out of stock
+$get_stock_query = "SELECT SUM(stock_quantity) AS total FROM product_variations WHERE products_id='$product_id'";
+    $run_stock_query = mysqli_query($db, $get_stock_query);
+ 
+
+    if ($run_stock_query) {
+        $row = mysqli_fetch_assoc($run_stock_query);
+        
+        return $row['total'] == 0; // If total is 0, all variants are out of stock
+    } else {
+        // Handle database query error
+        return true; // Assuming an error means all variants are out of stock
+    }
+}
 
 function getProd()
 {
@@ -346,6 +383,8 @@ function getProd()
     if (isset($_GET['product_id'])) {
 
         $product_id = $_GET['product_id'];
+
+        
 
         $get_product_id = "select * from products where products_id='$product_id'";
         $run_product_id = mysqli_query($db, $get_product_id);
@@ -357,20 +396,28 @@ function getProd()
         $product_desc = $row_products['product_desc'];
         $product_img1 = $row_products['product_img1'];
         $product_img2 = $row_products['product_img2'];
-
+        $discount_percentage = $row_products['discount_percentage'];
 
         $get_p_cat_name = "select p_cat_title from products as P,product_categories as C where P.p_cat_id=C.p_cat_id and products_id=$product_id";
         $run_get_p_cat_name = mysqli_query($db, $get_p_cat_name);
 
-
         $row_p_cat_name = mysqli_fetch_array($run_get_p_cat_name);
 
-
         $p_cat_name = $row_p_cat_name['p_cat_title'];
+        echo '<input type="hidden" id="productIdvar" value="' . $row_products['products_id'] . '">';
 
+
+        // Query to get variations data from the product_variations table
+        $get_variations = "SELECT DISTINCT size, color, image_url,stock_quantity FROM product_variations WHERE products_id='$product_id'";
+        $run_variations = mysqli_query($db, $get_variations);
+
+        // Fetch variations into an array
+        $variationsArray = array();
+        while ($variation = mysqli_fetch_assoc($run_variations)) {
+            $variationsArray[] = $variation;
+        }
 
         echo "
-        
     <div class='col-lg-6' style='margin:0 auto'>
         <div class='product-pic-zoom  col-md-8' style='max-height:400px;margin: 0 0 30px 0'>
             <img class='product-big-img' src='img/products/$product_img1' alt='$product_title'>
@@ -382,7 +429,7 @@ function getProd()
             <div class='product-thumbs-track ps-slider owl-carousel'>
                 <div class='pt active' data-imgbigurl='img/products/$product_img1'><img src='img/products/$product_img1' alt='$product_title'></div>
                 <div class='pt' data-imgbigurl='img/products/$product_img2'><img src='img/products/$product_img2' alt='$product_title'></div>
-              </div>
+            </div>
         </div>
     </div>
     <div class='col-lg-6'>
@@ -390,17 +437,90 @@ function getProd()
             <div class='pd-title'>
                 <h3>$product_title</h3>
             </div>
+            "
+            
            
-            <div class='pd-desc'>
-                <p>$product_desc</p>
-                <h4>BDT $product_price</h4>
-            </div>
+            ;
+            
+            if ($discount_percentage > 0) {
+                // Calculate discounted price
+                $discounted_price = $product_price - ($product_price * $discount_percentage / 100);
+            
+                echo "
+                    <div class='pd-desc'>
+                        <p>$product_desc</p>
+                        <h4>
+                            <span style='text-decoration: line-through;'>BDT $product_price</span>
+                            <br>
+                            Offer Price: BDT $discounted_price ({$discount_percentage}% off)
+                        </h4>
+                    </div>";
+            } else {
+                echo "
+                    <div class='pd-desc'>
+                        <p>$product_desc</p>
+                        <h4>BDT $product_price</h4>
+                    </div>";
+            }
+           
+           echo" <ul class='pd-tags'>
+           <li><span>CATEGORY</span>: $p_cat_name</li>
+       </ul>";
 
-            <ul class='pd-tags'>
-                <li><span>CATEGORY</span>: $p_cat_name</li>
-            </ul>
+        // Display product variations
+        echo "
+        <!-- Product variations -->
+        <div class='col-lg-12' style='margin:0'>
+            <p>Available Sizes and Colors:</p>
+            <div class='product-variations' style='display:flex'>";
+
+        // Loop through the array of variations to display
+        foreach ($variationsArray as $variation) {
+            $size = $variation['size'];
+            $color = $variation['color'];
+            $imageUrl = $variation['image_url'];
+
+            // Display variation information (you can customize this as needed)
+            echo "
+                <div class='variation-item ' >
+                    <div class='product-thumbs '>
+                        <div class='product-thumbs-track ps-slider owl-carousel'>
+                            <div class='pt active' data-imgbigurl='img/products/$imageUrl'>
+                                <img src='img/products/$imageUrl' alt='$product_title' class='small-image'>
+                                <p class='text-center'>$color</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>";
+        }
+
+        echo "
+            </div>
+        </div>";
+
+       
         
-        ";
+    }
+}
+
+function getVariationsArray(){
+    global $db;
+
+    if (isset($_GET['product_id'])) {
+
+        $product_id = $_GET['product_id'];
+
+        // Query to get variations data from the product_variations table
+        $get_variations = "SELECT DISTINCT size, color, image_url,stock_quantity FROM product_variations WHERE products_id='$product_id'";
+        $run_variations = mysqli_query($db, $get_variations);
+
+        // Fetch variations into an array
+        $variationsArray = array();
+        while ($variation = mysqli_fetch_assoc($run_variations)) {
+            $variationsArray[] = $variation;
+        }
+
+        return $variationsArray;
     }
 }
 
@@ -513,14 +633,77 @@ function total_price()
 
         $get_price = "select * from products where products_id = '$p_id'";
         $run_price = mysqli_query($db, $get_price);
+        $sub_price =0;
 
         while ($row_price = mysqli_fetch_array($run_price)) {
+            $product_price = $row_price['product_price'];
 
-            $sub_price = $row_price['product_price'] * $pro_qty;
+            $discount_percentage = $row_price['discount_percentage'];
+            if ($discount_percentage > 0) {
+                $discounted_price = calculateDiscountedPrice($product_price, $discount_percentage);
+                $sub_price = $discounted_price * $pro_qty;
+            } else {
+               
+                $sub_price = $product_price * $pro_qty;
+            }
+
+           
             $total += $sub_price;
         }
     }
     echo "BDT " . $total;
+}
+
+
+function totalWithDeliveryCharge() {
+    global $db;
+    $c_id = null;
+
+    $ip_add = getRealIpUser();
+
+    if (isset($_SESSION['user_id'])) {
+        $c_id = $_SESSION['user_id'];
+    }
+
+    $total = 0;
+
+    $get_items = "SELECT * FROM cart WHERE c_id = '$c_id'";
+    $run_items = mysqli_query($db, $get_items);
+
+    while ($row_items = mysqli_fetch_array($run_items)) {
+        $p_id = $row_items['products_id'];
+        $pro_qty = $row_items['qty'];
+
+        $get_price = "SELECT * FROM products WHERE products_id = '$p_id'";
+        $run_price = mysqli_query($db, $get_price);
+        $sub_price = 0;
+
+        while ($row_price = mysqli_fetch_array($run_price)) {
+            $product_price = $row_price['product_price'];
+
+            $discount_percentage = $row_price['discount_percentage'];
+            if ($discount_percentage > 0) {
+                $discounted_price = calculateDiscountedPrice($product_price, $discount_percentage);
+                $sub_price = $discounted_price * $pro_qty;
+            } else {
+                $sub_price = $product_price * $pro_qty;
+            }
+
+            $total += $sub_price;
+        }
+    }
+
+    // Add delivery charge
+    $delivery_charge = 60;
+    $total += $delivery_charge;
+
+    echo "BDT " . $total;}
+
+
+
+function calculateDiscountedPrice($originalPrice, $discountPercentage)
+{
+    return $originalPrice - ($originalPrice * $discountPercentage / 100);
 }
 
 $countrows = 0;
@@ -560,6 +743,8 @@ function cart_items()
                                 <th>Image</th>
                                 <th class='p-name'>Product Name</th>
                                 <th>Price</th>
+                                <th>Size</th>
+                                <th>Color</th>
                                 <th>Quantity</th>
                                 <th>Total</th>
                                 <th></th>
@@ -571,9 +756,19 @@ function cart_items()
 
         while ($row_items = mysqli_fetch_array($run_itemss)) {
             $p_id = $row_items['products_id'];
+            $variant_id = $row_items['variant_id'];
             $pro_qty = $row_items['qty'];
 
-            $get_item = "select * from products where products_id = '$p_id'";
+          
+
+
+            // $get_item = "select * from products where products_id = '$p_id'";
+                    
+            $get_item = "SELECT products.*, product_variations.*
+            FROM products 
+            LEFT JOIN product_variations ON products.products_id = product_variations.products_id
+            WHERE product_variations.variation_id = '$variant_id'";
+
             $run_item = mysqli_query($db, $get_item);
 
             while ($row_item = mysqli_fetch_array($run_item)) {
@@ -581,30 +776,48 @@ function cart_items()
                 $pro_id = $row_item['products_id'];
                 $pro_name = $row_item['product_title'];
                 $pro_price = $row_item['product_price'];
-                $pro_img1 = $row_item['product_img1'];
+                $pro_size = $row_item['size'];
+                $pro_color = $row_item['color'];
+                $pro_img1 = $row_item['image_url'];
+                $discount_percentage = $row_item['discount_percentage'];
+                $pro_discounted_price = $pro_price - ($pro_price * $discount_percentage / 100);
 
-                $pro_total_p = $pro_price * $pro_qty;
+                // Calculate total price after discount
+                $pro_total_p = $pro_discounted_price * $pro_qty;
+
+
+               // $pro_total_p = $pro_price * $pro_qty;
             }
 
             echo "
-    
-        <tr style='border-bottom: 0.5px solid #ebebeb'>
-           <td class='cart-pic first-row'><img src='img/products/$pro_img1' alt='$pro_name' style='max-height:100px'></td>
-           <td class='cart-title first-row'>
-               <h5><a href='product.php?product_id=$pro_id' style='color:black;font-weight:bold'>$pro_name</h5>
-           </td>
-           <td class='p-price first-row'>BDT $pro_price</td>
-           <td class='qua-col first-row'>
-               <div class='quantity'>
-                   <div class='pro-qty'>
-                       <input id = 'qqty' type='text' value='$pro_qty'>
-                   </div>
+    <tr style='border-bottom: 0.5px solid #ebebeb'>
+       <td class='cart-pic first-row'><img src='img/products/$pro_img1' alt='$pro_name' style='max-height:100px'></td>
+       <td class='cart-title first-row'>
+           <h5><a href='product.php?product_id=$pro_id' style='color:black;font-weight:bold'>$pro_name</h5>
+       </td>
+       <td class='p-price first-row'>";
+
+    // Display both original and discounted price if there is a discount
+    if ($discount_percentage > 0) {
+        echo "BDT <del>$pro_price</del> $pro_discounted_price";
+    } else {
+        echo "BDT $pro_price";
+    }
+
+    echo "</td>
+    <td> <h5><a href='product.php?product_id=$pro_id' style='color:black;font-weight:bold'>$pro_size</a></h5></td>
+            <td> <h5><a href='product.php?product_id=$pro_id' style='color:black;font-weight:bold'>$pro_color</a></h5></td>
+           
+       <td class='qua-col first-row'>
+           <div class='quantity'>
+               <div class='pro-qty'>
+                   <input id='qqty' type='text' value='$pro_qty'>
                </div>
-           </td>
-           <td class='total-price first-row'>BDT $pro_total_p</td>
-           <td class='close-td first-row'><a href='shopping-cart.php?del=$pro_id'><i class='ti-close' style='color:black'></i></a></td>
-       </tr>    
-   ";
+           </div>
+       </td>
+       <td class='total-price first-row'>BDT $pro_total_p</td>
+       <td class='close-td first-row'><a href='shopping-cart.php?del=$pro_id'><i class='ti-close' style='color:black'></i></a></td>
+    </tr>";
         }
     }
 }
@@ -640,18 +853,26 @@ function cart_icon_prod()
 
         while ($row_items = mysqli_fetch_array($run_items)) {
             $p_id = $row_items['products_id'];
+            $v_id = $row_items['variant_id'];
             $pro_qty = $row_items['qty'];
 
-            $get_item = "select * from products where products_id = '$p_id' ORDER BY date DESC";
+            $get_item = "SELECT products.*, product_variations.*
+            FROM products 
+            LEFT JOIN product_variations ON products.products_id = product_variations.products_id
+            WHERE product_variations.variation_id = '$v_id'  ORDER BY date DESC";
             $run_item = mysqli_query($db, $get_item);
 
             while ($row_item = mysqli_fetch_array($run_item)) {
 
                 $pro_name = $row_item['product_title'];
                 $pro_price = $row_item['product_price'];
-                $pro_img1 = $row_item['product_img1'];
+                $discount_price = $row_item['discount_percentage'];
+                $pro_img1 = $row_item['image_url'];
 
-                $pro_total_p = $pro_price * $pro_qty;
+                $discounted = $pro_price - ($pro_price * $discount_price / 100);
+//
+
+                $pro_total_p = $discounted * $pro_qty;
             }
 
             echo "
@@ -659,7 +880,7 @@ function cart_icon_prod()
         <td class='si-pic'><img src='img/products/$pro_img1' alt='$pro_name' style='max-height:70px'></td>
         <td class='si-text'>
             <div class='product-selected'>
-                <p>BDT $pro_price x $pro_qty</p>
+                <p>BDT $discounted x $pro_qty</p>
                 <h6>$pro_name</h6>
             </div>
         </td>
@@ -725,3 +946,6 @@ function checkoutProds()
         }
     }
 }
+
+
+

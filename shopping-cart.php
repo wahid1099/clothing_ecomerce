@@ -48,7 +48,9 @@ include('header.php');
                         <div class="proceed-checkout">
                             <ul>
                                 <li class="subtotal">Subtotal <span><?php total_price() ?></span></li>
-                                <li class="cart-total">Total <span><?php total_price() ?></span></li>
+                                <li class="fw-normal">Delivery Charge: <span>60TK</span></li>
+
+                                <li class="cart-total">Total <span><?php totalWithDeliveryCharge() ?></span></li>
                             </ul>
                             <a href="check-out.php" class="proceed-btn">PROCEED TO CHECK OUT</a>
                         </div>

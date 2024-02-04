@@ -69,8 +69,7 @@ if (!$result) {
                             ?>
                         </select>
                     </div>
-                    <div> <h4>Product Code:</h4>
-                        </div>
+                   
                         <div class="form-group">
                             <label for="size">Size:</label>
                             <select class="form-control" id="size" name="size" required>
@@ -157,7 +156,8 @@ if (!$result) {
             echo '<td><img src="' . $imagePath . '" alt="Product Image" style="max-width: 100px;"></td>';
 
             echo '<td>'; 
-            echo '<button type="button" class="btn btn-warning " style="margin: 10px;" data-toggle="modal" data-target="#updateModal' . $row['variation_id'] . '">Update</button>'; 
+            echo '<button type="button" class="btn btn-warning" style="margin: 10px;"  onclick="openStockUpdateModal(' . $row['variation_id'] . ')"  data-toggle="modal" data-target="#updateStockModal">Update</button>';
+
             echo '<button type="button" class="btn btn-danger " data-toggle="modal" data-target="#deleteModal' . $row['variation_id'] . '">Delete</button>';
             echo '</td>';
 
@@ -244,6 +244,9 @@ function showToast(message) {
             }).showToast();
     }
 </script>
+
+<script src="./inclueds/stock_data.js"></script>
+
 </body>
 
 </html>

@@ -11,7 +11,10 @@ function openUpdateModal(productId) {
       $("#updateProductTitle").val(data.product_title);
 
       $("#updateProductPrice").val(data.product_price);
+      $("#updateProductcode").val(data.product_code);
+      $("#updatediscoutperct").val(data.discount_percentage);
       $("#updateProductdesc").html(data.product_desc);
+
       // Update image previews
       $("#updateImage1Preview").attr(
         "src",
@@ -22,6 +25,57 @@ function openUpdateModal(productId) {
         "../img/products/" + data.product_img2
       );
 
+      var categoryDropdown = $("#updateCategory");
+      var productCategoryDropdown = $("#updateProductCategory");
+
+      categoryDropdown.empty();
+      productCategoryDropdown.empty();
+
+      // for categoryDropdown
+
+      $.each(data.categories, function (index, category) {
+        categoryDropdown.append(
+          $("<option>", {
+            value: category.cat_id,
+            text: category.cat_title,
+          })
+        );
+      });
+
+      // for Product categoryDropdown
+
+      $.each(data.productCategories, function (index, p_category) {
+        productCategoryDropdown.append(
+          $("<option>", {
+            value: p_category.p_cat_id,
+            text: p_category.p_cat_title,
+          })
+        );
+      });
+
+      productCategoryDropdown.val(data.p_cat_id);
+
+      categoryDropdown.val(data.cat_id);
+
+      // If  category information is available, set it in the dropdown
+      if (data.cat_id) {
+        categoryDropdown.append(
+          $("<option>", {
+            value: data.cat_id,
+            text: data.cat_title,
+          })
+        );
+      }
+      // If product category information is available, set it in the dropdown
+
+      if (data.p_cat_id) {
+        productCategoryDropdown.append(
+          $("<option>", {
+            value: data.p_cat_id,
+            text: data.p_cat_title,
+          })
+        );
+      }
       $("#updateProductkeyword").val(data.product_keywords);
       // Populate more form fields as needed
 
@@ -72,7 +126,7 @@ function submitUpdateForm() {
       // Reload the page after a delay (e.g., 3 seconds)
       setTimeout(function () {
         location.reload();
-      }, 2000); // Adjust the delay as needed
+      }, 1000); // Adjust the delay as needed
     },
     error: function (error) {
       // Handle the update error

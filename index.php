@@ -52,32 +52,32 @@ while ($row_slides = mysqli_fetch_array($run_slider)) {
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-4">
-                <a href='shop.php?cat_id=1'>
+                <a href='shop.php?p_cat_id=3'>
                     <div class="single-banner">
-                        <img src="img/banner-1.png" alt="Mens">
+                        <img src="img/mens-jeans.jpg" alt="Mens">
                         <div class="inner-text">
-                            <h4>Men’s</h4>
+                            <h4>Jean's</h4>
                         </div>
                     </div>
                 </a>
             </div>
             <div class="col-lg-4">
-                <a href='shop.php?cat_id=2'>
+                <a href='shop.php?p_cat_id=1'>
                     <div class="single-banner">
-                        <img src="img/banner-2.png" alt="">
+                        <img src="img/panjabi-short.jpg" alt="" style="width:100%; height:303px;">
                         <div class="inner-text">
-                            <h4>Women’s</h4>
+                            <h4>Panjabis</h4>
                         </div>
                     </div>
                 </a>
 
             </div>
             <div class="col-lg-4">
-                <a href='shop.php?cat_id=3'>
+                <a href='shop.php?p_cat_id=2'>
                     <div class="single-banner">
-                        <img src="img/banner-3.png" alt="">
+                        <img src="img/t-shirts.jpg" alt="" style="width:100%; height:303px;">
                         <div class="inner-text">
-                            <h4>Kid’s</h4>
+                            <h4>T-shirt's</h4>
                         </div>
                     </div>
                 </a>
@@ -93,9 +93,9 @@ while ($row_slides = mysqli_fetch_array($run_slider)) {
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-3">
-                <div class="product-large set-bg" data-setbg="img/women-large.jpg">
-                    <h2>Women’s</h2>
-                    <a href="shop.php?cat_id=2">Discover More</a>
+                <div class="product-large set-bg" data-setbg="img/panjabi.jpg">
+                    <h2>Panjabis</h2>
+                    <a href="shop.php?p_cat_id=1">Discover More</a>
                 </div>
             </div>
             <div class="col-lg-8 offset-lg-1">
@@ -132,7 +132,7 @@ while ($row_slides = mysqli_fetch_array($run_slider)) {
             </div>
             <div class="col-lg-3 offset-lg-1">
                 <div class="product-large set-bg m-large" data-setbg="img/men-large.jpg">
-                    <h2>Men’s</h2>
+                    <h2>Jean's</h2>
                     <a href="shop.php?cat_id=1">Discover More</a>
                 </div>
             </div>

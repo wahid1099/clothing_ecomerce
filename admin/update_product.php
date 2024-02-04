@@ -6,8 +6,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $productId = $_POST['updateProductId'];
     $productTitle = isset($_POST['updateProductTitle']) ? $_POST['updateProductTitle'] : '';
     $productPrice = isset($_POST['updateProductPrice']) ? $_POST['updateProductPrice'] : '';
+    $productcode = isset($_POST['updateProductcode']) ? $_POST['updateProductcode'] : '';
+    $discoutnprct = isset($_POST['updatediscoutperct']) ? $_POST['updatediscoutperct'] : '';
     $productDesc = isset($_POST['updateProductdesc']) ? $_POST['updateProductdesc'] : '';
     $productKeywords = isset($_POST['updateProductkeyword']) ? $_POST['updateProductkeyword'] : '';
+    $categoryId = isset($_POST['updateCategory']) ? $_POST['updateCategory'] : ''; // Assuming the dropdown has the name 'updateCategory'
+    $ProdcutcategoryId = isset($_POST['updateProductCategory']) ? $_POST['updateProductCategory'] : ''; // Assuming the dropdown has the name 'updateCategory'
+    
     // Extract more fields as needed
 
     // Handle file uploads
@@ -52,7 +57,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         product_title = '$productTitle',
         product_price = '$productPrice',
         product_desc = '$productDesc',
-        product_keywords = '$productKeywords'";
+        product_keywords = '$productKeywords',
+        cat_id = '$categoryId',
+        product_code = '$productcode',
+        discount_percentage = '$discoutnprct',
+        p_cat_id = '$ProdcutcategoryId'";
 
     // Append image fields only if new images are selected
     if ($image1FileName != '') {

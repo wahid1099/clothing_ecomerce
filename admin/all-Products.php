@@ -86,8 +86,31 @@ if (!$result) {
                         <label for="updateProductkeyword">Product Keyword</label>
                         <input type="text" class="form-control" id="updateProductkeyword" name="updateProductkeyword" required>
                     </div>
-                    <!-- Add more form fields as needed -->
 
+                    <div class="form-group">
+                        <label for="updateProductcode">Product Code</label>
+                        <input type="text" class="form-control" id="updateProductcode" name="updateProductcode" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="updatediscoutperct">Discout Percenatage</label>
+                        <input type="text" class="form-control" id="updatediscoutperct" name="updatediscoutperct" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="updateCategory">Category</label>
+                        <select class="form-control" id="updateCategory" name="updateCategory" required>
+                            <!-- Categories will be populated here dynamically -->
+                        </select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="updateProductCategory">Product Category</label>
+                        <select class="form-control" id="updateProductCategory" name="updateProductCategory" required>
+                            <!-- Product Categories will be populated here dynamically -->
+                        </select>
+                    </div>
                     <input type="hidden" id="updateProductId" name="updateProductId">
 
                     <button type="button" class="btn btn-primary" onclick="submitUpdateForm()">Update</button>

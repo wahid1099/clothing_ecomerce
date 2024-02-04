@@ -8,7 +8,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
 
-function sendOrderConfirmationEmail($con, $order_id, $customer_name, $customer_email, $total_q, $final_price, $product_ids_str,$customer_phone,$customer_address) {
+function sendOrderConfirmationEmail($con, $order_id, $customer_name, $customer_email, $total_q, $final_price, $product_ids_str,$variation_ids_str ,$customer_phone,$customer_address) {
     $c_id=null;
   
     if (isset($_SESSION['user_id'])) {
@@ -53,6 +53,8 @@ function sendOrderConfirmationEmail($con, $order_id, $customer_name, $customer_e
             <tr>
                 <th>Product ID</th>
                 <th>Product Name</th>
+                <th>Product Color</th>
+                <th>Product Size</th>
                 <th>Quantity</th>
 
                 <!-- Add more table headers as needed -->
@@ -60,17 +62,24 @@ function sendOrderConfirmationEmail($con, $order_id, $customer_name, $customer_e
     
     // Fetch product details and append to the table
     $product_ids = explode(',', $product_ids_str);
-    foreach ($product_ids as $product_id) {
-        $get_product = "SELECT * FROM products WHERE products_id = '$product_id'";
-        $run_product = mysqli_query($con, $get_product);
+    $varation_ids = explode(',',  $variation_ids_str );
+   
+    foreach (array_map(null, $product_ids, $varation_ids) as [$product_id, $variation_id]) {
+        $get_product_info = "SELECT p.product_title, p.product_price, v.* 
+                         FROM products p 
+                         JOIN product_variations v ON p.products_id = v.products_id 
+                         WHERE p.products_id = '$product_id' AND v.variation_id = '$variation_id'";
     
-        if ($row_product = mysqli_fetch_array($run_product)) {
-            $productImagePath = './img/products/' . $row_product['product_img1'];
+
+    $run_product_info = mysqli_query($con, $get_product_info);
+
+    if ($row_product_info = mysqli_fetch_array($run_product_info)) {
+        $productImagePath = './img/products/' . $row_product_info['image_url'];
             $mail->addAttachment($productImagePath, basename($productImagePath));
 
 
               // Get individual product quantity
-            $get_quantity = "SELECT qty FROM cart WHERE c_id = '$c_id' AND products_id = '$product_id'";
+            $get_quantity = "SELECT qty FROM cart WHERE c_id = '$c_id' AND variant_id = '$variation_id'";
             $run_quantity = mysqli_query($con, $get_quantity);
             $row_quantity = mysqli_fetch_assoc($run_quantity);
             $product_quantity = $row_quantity['qty'];
@@ -79,8 +88,10 @@ function sendOrderConfirmationEmail($con, $order_id, $customer_name, $customer_e
             // Add a new row to the table for each product
             $mail->Body .= "
                 <tr>
-                    <td>{$row_product['products_id']}</td>
-                    <td>{$row_product['product_title']}</td>
+                    <td>{$row_product_info['products_id']}</td>
+                    <td>{$row_product_info['product_title']}</td>
+                    <td>{$row_product_info['color']}</td>
+                    <td>{$row_product_info['size']}</td>
                     <td>$product_quantity</td> 
 
                     <!-- Add more table cells as needed -->

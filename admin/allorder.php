@@ -51,7 +51,7 @@ if (!$result) {
             <th scope="col">Adress</th>
             <th scope="col">Phone No</th>
             <th scope="col">Total Price</th>
-            <th scope="col">Product Id's</th>
+            <th scope="col">Order Details</th>
             <th scope="col">Date</th>
             <th scope="col">Status</th>
             <th scope="col">Action</th>
@@ -65,6 +65,13 @@ if (!$result) {
 
         // Loop through the orders and display them in the table
         while ($row = mysqli_fetch_assoc($result)) {
+
+            // $order_id = $row['order_id'];
+            // $productQuery = "SELECT products.products_id, products.discount_percentage
+            //                  FROM order_details
+            //                  JOIN products ON  order_details.products_id  = products.products_id
+            //                  WHERE order_details.order_id = $order_id";
+            // $productResult = mysqli_query($con, $productQuery);
             
             echo '<tr>';
             echo '<td>' . $row['order_id'] . '</td>';
@@ -72,7 +79,9 @@ if (!$result) {
             echo '<td>' . $row['customer_address'] . '</td>';
             echo '<td>' . $row['customer_phone'] . '</td>';
             echo '<td>' . $row['order_price'] . '</td>';
-            echo '<td>' . $row['product_id'] . '</td>';
+            echo '<td>';
+            echo '<button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#orderDetailsModal" onclick="openOrderDetailsModal(' . $row['order_id'] . ')">Order Details</button>';
+            echo '</td>';
             echo '<td>' . $row['date'] . '</td>';
             echo '<td>' . $row['status'] . '</td>';
             
@@ -91,12 +100,32 @@ if (!$result) {
             echo '</tr>';
         }
 
-        // Free the result set
+        // Free the result set 
         mysqli_free_result($result);
         ?>
     </tbody>
 </table>
 
+
+<!-- Modal -->
+<div class="modal fade" id="orderDetailsModal" role="dialog">
+   <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Order Details</h4>
+         </div>
+         <div class="modal-body" id="orderDetailsContent">
+            <!-- Content will be dynamically populated here -->
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+         </div>
+      </div>
+   </div>
+</div>
+<!-- end -->
 
 </div>
 
@@ -155,6 +184,26 @@ function showToast(message) {
         position: 'center', // Center the toast horizontally
         backgroundColor: 'linear-gradient(to right, #00b09b, #96c93d)', // Set your preferred background color
     }).showToast();
+}
+
+
+function openOrderDetailsModal(orderId) {
+    // Use AJAX to fetch order details based on the orderId
+    $.ajax({
+        type: 'POST',
+        url: 'get_order_details.php',
+        data: { orderId: orderId },
+        success: function (data) {
+            // Update the content of the modal with the fetched data
+            $('#orderDetailsContent').html(data);
+
+            // Open the modal
+            $('#orderDetailsModal').modal('show');
+        },
+        error: function (error) {
+            console.error('Error fetching order details:', error);
+        }
+    });
 }
 </script>
 
