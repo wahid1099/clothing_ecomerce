@@ -122,6 +122,8 @@ if (isset($_GET['place']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
         $size = $row_items['size'];
         $color = $row_items['color'];
         $variant_id = $row_items['variant_id'];
+        echo "<script>console.log('$size');</script>";
+
 
         $get_item = "SELECT * FROM products WHERE products_id = ?";
         $stmt_get_item = mysqli_prepare($con, $get_item);

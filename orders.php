@@ -14,7 +14,7 @@ if (isset($_SESSION['customer_email'])) {
     $custom_id = $get_query['customer_id'];
 
 
-    $get_items = "select * from orders where c_id = '$custom_id' ORDER BY date DESC";
+    $get_items = "select * from orders where c_id = '$c_id' ORDER BY date DESC";
     $run_items = mysqli_query($db, $get_items);
 
 
@@ -28,6 +28,11 @@ if (isset($_SESSION['customer_email'])) {
                 <th>Price</th>
                 <th> Quantity</th>
                 <th>Date</th>
+                <th>Status</th>
+                <th>Adress</th>
+                <th>Phone</th>
+               
+                
             </tr>
         </thead>
 
@@ -41,6 +46,9 @@ if (isset($_SESSION['customer_email'])) {
         $o_qty = $row_items['order_qty'];
         $o_price = $row_items['order_price'];
         $o_date = $row_items['date'];
+        $o_status = $row_items['status'];
+        $o_adress = $row_items['customer_address'];
+        $o_phone = $row_items['customer_phone'];
 
         echo
 
@@ -53,6 +61,15 @@ if (isset($_SESSION['customer_email'])) {
         <td class='first-row'>
             $o_date
         </td>
+        <td class='first-row'>
+        $o_status
+    </td>
+    <td class='first-row'>
+    $o_adress 
+</td>
+<td class='first-row'>
+$o_phone
+</td>
     </tr>";
     }
 }

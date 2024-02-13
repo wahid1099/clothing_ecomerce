@@ -32,7 +32,8 @@ if (!$result) {
     <!-- datatable -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
 
-   
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+
 
 </head>
 
@@ -72,7 +73,7 @@ if (!$result) {
                    
                         <div class="form-group">
                             <label for="size">Size:</label>
-                            <select class="form-control" id="size" name="size" required>
+                            <select class="form-control" id="size" name="size[]" multiple required>
                                 <option value="S">S</option>
                                 <option value="M">M</option>
                                 <option value="L">L</option>
@@ -143,14 +144,15 @@ if (!$result) {
         // Loop through the orders and display them in the table
         while ($row = mysqli_fetch_assoc($result)) {
             $imagePath = '../img/products/' . $row['image_url'];
-
-            
+//
+           
             echo '<tr>';
             echo '<td>' . $row['products_id'] . '</td>';
             echo '<td>' . $row['product_title'] . '</td>';
             echo '<td>' . $row['product_code'] . '</td>';
-            
             echo '<td>' . $row['size'] . '</td>';
+            
+
             echo '<td>' . $row['color'] . '</td>';
             echo '<td>' . $row['stock_quantity'] . '</td>';
             echo '<td><img src="' . $imagePath . '" alt="Product Image" style="max-width: 100px;"></td>';
@@ -246,7 +248,10 @@ function showToast(message) {
 </script>
 
 <script src="./inclueds/stock_data.js"></script>
-
+<script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+     <script>
+    new MultiSelectTag('size')  // id
+</script>
 </body>
 
 </html>

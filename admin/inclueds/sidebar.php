@@ -11,7 +11,7 @@
 
  <a href="./allcategories.php"><i class="fa fa-tags" aria-hidden="true"></i> All Categories</a>
 
- <a href="./productctg.php"> <i class="fa fa-picture-o" aria-hidden="true"></i> Product Categories</a>
+ <a href="./productctg.php"> <i class="fa fa-picture-o" aria-hidden="true"></i> Sub-Categories</a>
  <a href="./slider.php">  <i class="fa fa-rss" aria-hidden="true"></i></i> Slider</a>
 
 

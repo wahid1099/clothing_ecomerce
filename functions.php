@@ -43,19 +43,20 @@ function addCart()
         $ip_add = getRealIpUser();
         $p_id = $_GET['add_cart'];
         $qty = $_POST['product_qty'];
-        $size = $_POST['size'];
+        $size = $_POST['selected_size'];
         $color = $_POST['color'];
        // Redirect to the checkout page
+     
 
      
-       $variant_query = "SELECT variation_id FROM product_variations WHERE products_id = '$p_id' AND size = '$size' AND color = '$color'";
+       $variant_query = "SELECT variation_id FROM product_variations WHERE products_id = '$p_id' AND color = '$color'";
        $run_variant_query = mysqli_query($db, $variant_query);
             
         if ($run_variant_query && $variant_row = mysqli_fetch_assoc($run_variant_query)) {
           $variant_id = $variant_row['variation_id'];
           
 
-             $check_product = "SELECT * FROM cart WHERE c_id = '$c_id' AND products_id = '$p_id' AND variant_id = '$variant_id'";
+             $check_product = "SELECT * FROM cart WHERE c_id = '$c_id' AND products_id = '$p_id' AND size='$size' AND variant_id = '$variant_id'";
                $run_check = mysqli_query($db, $check_product);
                     
             if (mysqli_num_rows($run_check) > 0) {
@@ -217,7 +218,6 @@ function getCat()
         ";
     }
 }
-
 function getPcatProd()
 {
     global $db;
@@ -229,59 +229,57 @@ function getPcatProd()
         $get_p_cat = "select * from product_categories where p_cat_id='$p_cat_id'";
         $run_p_cat = mysqli_query($db, $get_p_cat);
 
-        $row_p_cat = mysqli_fetch_array($run_p_cat);
+        // Check if the query was successful and if there are rows returned
+        if ($run_p_cat && mysqli_num_rows($run_p_cat) > 0) {
+            $row_p_cat = mysqli_fetch_array($run_p_cat);
 
-        $p_cat_title = $row_p_cat['p_cat_title'];
-        $p_cat_desc = $row_p_cat['p_cat_desc'];
+            $p_cat_title = $row_p_cat['p_cat_title'];
+            $p_cat_desc = $row_p_cat['p_cat_desc'];
 
-        $get_products = "select * from products where p_cat_id='$p_cat_id'";
-        $run_products = mysqli_query($db, $get_products);
+            $get_products = "select * from products where p_cat_id='$p_cat_id'";
+            $run_products = mysqli_query($db, $get_products);
 
-        $count = mysqli_num_rows($run_products);
-        
-        if ($count == 0) {
+            $count = mysqli_num_rows($run_products);
 
-            echo "
-                <div class='card' style='font-weight:bold; color:#fe4231'>
-                    <div class='card-body'>No Products Available</div>
-                </div>
-
-                    ";
-        } else {
-
-
-
-            while ($row_products = mysqli_fetch_array($run_products)) {
-
-                $products_id = $row_products['products_id'];
-                $product_title = $row_products['product_title'];
-                $product_price = $row_products['product_price'];
-                $product_img1 = $row_products['product_img1'];
-
+            if ($count == 0) {
                 echo "
-        
-                <div class='col-lg-4 col-sm-6'>
-                <div class='product-item'>
-                    <div class='pi-pic' style='max-height:350px'>
-                        <img src='img/products/$product_img1' alt='$product_title'>
-                        <ul>
-                            <li class='quick-view'><a href='product.php?product_id=$products_id' style='background:#fe4231;color:white'>View Details</a></li>
-                        </ul>
+                    <div class='card' style='font-weight:bold; color:#fe4231'>
+                        <div class='card-body'>No Products Available</div>
                     </div>
-                    <div class='pi-text'>
-                        <div class='catagory-name'></div>
-                        <a href='product.php?product_id=$products_id'>
-                            <h5>$product_title</h5>
-                        </a>
-                        <div class='product-price'>
-                        BDT $product_price                    
-                        </div>
-                    </div>
-                </div>
-            </div>
+                ";
+            } else {
+                while ($row_products = mysqli_fetch_array($run_products)) {
+                    $products_id = $row_products['products_id'];
+                    $product_title = $row_products['product_title'];
+                    $product_price = $row_products['product_price'];
+                    $product_img1 = $row_products['product_img1'];
 
-    ";
+                    echo "
+                        <div class='col-lg-4 col-sm-6'>
+                            <div class='product-item'>
+                                <div class='pi-pic' style='max-height:350px'>
+                                    <img src='img/products/$product_img1' alt='$product_title'>
+                                    <ul>
+                                        <li class='quick-view'><a href='product.php?product_id=$products_id' style='background:#fe4231;color:white'>View Details</a></li>
+                                    </ul>
+                                </div>
+                                <div class='pi-text'>
+                                    <div class='catagory-name'></div>
+                                    <a href='product.php?product_id=$products_id'>
+                                        <h5>$product_title</h5>
+                                    </a>
+                                    <div class='product-price'>
+                                        BDT $product_price                    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ";
+                }
             }
+        } else {
+            // Handle the case where no rows were returned from the query
+            echo "No Category Found";
         }
     }
 }
@@ -758,25 +756,32 @@ function cart_items()
             $p_id = $row_items['products_id'];
             $variant_id = $row_items['variant_id'];
             $pro_qty = $row_items['qty'];
+            $pro_size = $row_items['size'];
 
           
 
 
             // $get_item = "select * from products where products_id = '$p_id'";
                     
-            $get_item = "SELECT products.*, product_variations.*
+            $get_item = "SELECT products.products_id,products.product_title, products.product_price,products.discount_percentage,product_variations.color,product_variations.image_url, cart.size
             FROM products 
             LEFT JOIN product_variations ON products.products_id = product_variations.products_id
-            WHERE product_variations.variation_id = '$variant_id'";
+            LEFT JOIN cart ON product_variations.variation_id = cart.variant_id
+            WHERE cart.variant_id = '$variant_id'";
+
 
             $run_item = mysqli_query($db, $get_item);
+           // $item_data = [];
 
             while ($row_item = mysqli_fetch_array($run_item)) {
+              //  $item_data[] = $row_item;
+               
+
 
                 $pro_id = $row_item['products_id'];
                 $pro_name = $row_item['product_title'];
                 $pro_price = $row_item['product_price'];
-                $pro_size = $row_item['size'];
+               
                 $pro_color = $row_item['color'];
                 $pro_img1 = $row_item['image_url'];
                 $discount_percentage = $row_item['discount_percentage'];
@@ -788,6 +793,9 @@ function cart_items()
 
                // $pro_total_p = $pro_price * $pro_qty;
             }
+
+            // $item_json = json_encode($item_data);
+            // echo "<script>console.log(JSON.parse('" . $item_json . "'));</script>";
 
             echo "
     <tr style='border-bottom: 0.5px solid #ebebeb'>
@@ -927,6 +935,8 @@ function checkoutProds()
         while ($row_items = mysqli_fetch_array($run_items)) {
             $p_id = $row_items['products_id'];
             $pro_qty = $row_items['qty'];
+            $prod_size= $row_items['size'];
+            $prod_color= $row_items['color'];
 
             $get_item = "select * from products where products_id = '$p_id' ORDER BY date DESC";
             $run_item = mysqli_query($db, $get_item);
@@ -935,12 +945,19 @@ function checkoutProds()
 
                 $pro_name = $row_item['product_title'];
                 $pro_price = $row_item['product_price'];
+                $discount_percentage = $row_item['discount_percentage'];
+                $pro_discounted_price = $pro_price - ($pro_price * $discount_percentage / 100);
 
-                $pro_total_p = $pro_price * $pro_qty;
+                // Calculate total price after discount
+                $pro_total_p = $pro_discounted_price * $pro_qty;
+
+
+
+             //   $pro_total_p = $pro_price * $pro_qty;
             }
 
             echo "
-        <li class='fw-normal'>$pro_name x $pro_qty <span>$pro_total_p</span></li>
+        <li class='fw-normal'>$pro_name($prod_size+$prod_color)  x $pro_qty <span>$pro_total_p</span></li>
     
 ";
         }

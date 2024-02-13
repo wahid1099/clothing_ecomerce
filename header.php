@@ -155,39 +155,72 @@ include('db.php');
 
         <!-- Lower Bar -->
 
-
         <div class="nav-item">
-            <div class="container">
-                <div class="nav-depart">
-                    <div class="depart-btn">
-                        <i class="ti-menu"></i>
-                        <span>All Categories</span>
-                        <ul class="depart-hover">
-
-                            <?php
-                            getProdCat();
-                            ?>
-
-                        </ul>
-                    </div>
-                </div>
-                <nav class="nav-menu mobile-menu">
-                    <ul>
-                        <li class="<?php if ($active == 'Home') echo "active" ?>"><a href="index.php">Home</a></li>
-                        <li class="<?php if ($active == 'Shop') echo "active" ?>"><a href="shop.php">Shop</a></li>
-                        <li class="<?php if ($active == 'Contact') echo "active" ?>"><a href="contact.php">Contact</a></li>
-                          
-                        <?php if (isset($_SESSION['admin']) && $_SESSION['admin'] === true) : ?>
-                            <li>  <a href="admin/dashboard.php">Admin Panel</a> </li>
-        <?php endif; ?>
-       
-          
-
-                    </ul>
-                </nav>
-                <div id="mobile-menu-wrap"></div>
+    <div class="container">
+        <div class="nav-depart">
+            <div class="depart-btn">
+                <i class="ti-menu"></i>
+                <span>All Categories</span>
+                <ul class="depart-hover">
+                    <?php
+                    // Ensure the function getProdCat() is defined and implemented correctly
+                    getProdCat();
+                    ?>
+                </ul>
             </div>
         </div>
+        <nav class="nav-menu mobile-menu">
+           <ul>
+        <li class="<?php if ($active == 'Home') echo "active" ?>"><a href="index.php">Home</a></li>
+        <li class="<?php if ($active == 'Shop') echo "active" ?>"><a href="shop.php">Shop</a></li>
+        <!-- <li class="<?php if ($active == 'Contact') echo "active" ?>"><a href="contact.php">Contact</a></li> -->
+        <?php
+        // Ensure the database connection is established
+
+        // Query to fetch categories and their associated subcategories
+        $query = "SELECT * FROM category";
+        $result = mysqli_query($con, $query);
+
+        // Check for errors in query execution
+        if (!$result) {
+            echo "Error: " . mysqli_error($con);
+        } else {
+            // Loop through categories
+            while ($category = mysqli_fetch_assoc($result)) {
+                echo "<li><a href='shop.php?cat_id={$category['cat_id']}'>" . $category['cat_title'] . "</a>";
+
+                // Query to fetch subcategories for the current category
+                $subQuery = "SELECT * FROM product_categories WHERE cat_id = {$category['cat_id']}";
+                $subResult = mysqli_query($con, $subQuery);
+
+                // Check for errors in subquery execution
+                if (!$subResult) {
+                    echo "Error: " . mysqli_error($con);
+                } else {
+                    // If there are subcategories, display them
+                    if (mysqli_num_rows($subResult) > 0) {
+                        echo "<ul >";
+                        while ($subcategory = mysqli_fetch_assoc($subResult)) {
+                            echo "<li><a href='shop.php?p_cat_id={$subcategory['p_cat_id']}'>" . $subcategory['p_cat_title'] . "</a></li>";
+                        }
+                        echo "</ul>";
+                    }
+                }
+
+                echo "</li>";
+            }
+        }
+        ?>
+        <?php if (isset($_SESSION['admin']) && $_SESSION['admin'] === true) : ?>
+            <li><a href="admin/dashboard.php">Admin Panel</a></li>
+        <?php endif; ?>
+    </ul>
+</nav>
+
+        <div id="mobile-menu-wrap"></div>
+    </div>
+</div>
+
     </header>
     <!-- Header End -->
 

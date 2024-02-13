@@ -736,6 +736,25 @@ ol {
   display: none;
 }
 
+.nav-menu ul li ul {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #373636;
+  border-right: 0px solid #ccc;
+  z-index: 1000; /* Ensure the dropdown appears above other content */
+}
+
+.nav-menu ul li:hover > ul {
+  display: block;
+}
+
+.nav-menu ul li ul li {
+  display: block;
+  border-right: none;
+}
+
 /*---------------------  Hero Section  -----------------------*/
 
 .hero-items .single-hero-items {

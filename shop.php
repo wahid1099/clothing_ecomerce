@@ -22,11 +22,20 @@ include("header.php");
                         $get_p_cat = "select * from product_categories where p_cat_id='$p_cat_id'";
                         $run_p_cat = mysqli_query($db, $get_p_cat);
 
-                        $row_p_cat = mysqli_fetch_array($run_p_cat);
+                        // Check if the query executed successfully
+                        if ($run_p_cat) {
+                            $row_p_cat = mysqli_fetch_array($run_p_cat);
 
-                        $p_cat_title = $row_p_cat['p_cat_title'];
+                            if ($row_p_cat) {
+                                $p_cat_title = $row_p_cat['p_cat_title'];
 
-                        echo "  <span>$p_cat_title</span> ";
+                                echo "  <span>$p_cat_title</span> ";
+                            } else {
+                                echo "  <span>Category Not Found</span> ";
+                            }
+                        } else {
+                            echo "  <span>Error fetching category</span> ";
+                        }
                     }
                     ?>
 

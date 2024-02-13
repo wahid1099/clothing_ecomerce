@@ -7,7 +7,19 @@ include("auth_check.php");
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Process form data
     $product_id = mysqli_real_escape_string($con, $_POST['product_id']);
-    $size = mysqli_real_escape_string($con, $_POST['size']);
+    // $size = mysqli_real_escape_string($con, $_POST['size']);
+    $escaped_sizes = array();
+
+        // Loop through each selected size and escape it
+        foreach ($_POST['size'] as $size) {
+            $escaped_sizes[] = mysqli_real_escape_string($con, $size);
+        }
+
+        // Implode the escaped sizes into a comma-separated string
+        $size = implode(',', $escaped_sizes);
+
+        
+
     $color = mysqli_real_escape_string($con, $_POST['color']);
     $stock_quantity = mysqli_real_escape_string($con, $_POST['stock_quantity']);
 

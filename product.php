@@ -49,10 +49,10 @@ include('header.php');
 
 
 
-                        <form action='product.php?add_cart=<?php if (isset($_GET['product_id'])) {
-                                                                $product_id = $_GET['product_id'];
-                                                                echo $product_id;
-                                                            } ?>' method='post' id="productForm">
+                            <form action='product.php?add_cart=<?php if (isset($_GET['product_id'])) {
+                                $product_id = $_GET['product_id'];
+                                echo $product_id;
+                            } ?>' method='post' id="productForm">
 
 
 
@@ -86,7 +86,7 @@ include('header.php');
                                         </select>
                                     </div>
 
-                                    <div>
+                                    <div id="sizeDropdownContainer">
                                         <h4>Select Size:</h4>
                                         <select name="size" id='sizeDropdown'>
                                             <option value=''>-- Select Size --</option>
@@ -95,15 +95,16 @@ include('header.php');
                                     </div>
                                 </div>
                             </div>
+                            <input type="hidden" name="selected_size" id="selectedSize" value=""> 
                                 <p id="msg"></p>
                             </div><!-- form-group Finish -->
                             <input type="hidden" name="action" id="action" value="add_to_cart"> <!-- Default action is add to cart -->
 
                             
-                            <?php
-        // Check if all variants are out of stock
-        $allVariantsOutOfStock = areAllVariantsOutOfStock($product_id);
-        ?>
+                                                <?php
+                            // Check if all variants are out of stock
+                            $allVariantsOutOfStock = areAllVariantsOutOfStock($product_id);
+                            ?>
 
 
                             <?php

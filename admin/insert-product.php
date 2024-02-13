@@ -15,7 +15,7 @@ include("auth_check.php");
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
     <style>
         .top {
             font-size: 28px;
@@ -66,39 +66,6 @@ include("auth_check.php");
                                 <input type="text" class="form-control" name="product_title" required>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <label class="col-md-3 control-label">Product Category</label>
-
-                            <div class="col-md-6">
-                                <select class="form-control" name="p_cat_id">
-
-                                    <option>Select a Product Category</option>
-
-                                    <?php
-
-                                    $get_p_category = "select * from product_categories";
-                                    $run_p_category = mysqli_query($con, $get_p_category);
-
-                                    while ($p_cat_row = mysqli_fetch_array($run_p_category)) {
-
-                                        $p_cat_id = $p_cat_row['p_cat_id'];
-                                        $p_cat_title = $p_cat_row['p_cat_title'];
-
-                                        echo "
-                                        
-                                        <option value='$p_cat_id'>$p_cat_title</option>  
-                                        
-                                    
-                                        ";
-                                    }
-
-                                    ?>
-
-                                </select>
-                            </div>
-                        </div>
-
                         <div class="form-group">
                             <label class="col-md-3 control-label">Category</label>
 
@@ -131,6 +98,40 @@ include("auth_check.php");
                             </div>
                         </div>
 
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Subcategory Category</label>
+
+                            <div class="col-md-6">
+                                <select class="form-control" name="p_cat_id">
+
+                                    <option>Select a Subcategory Category</option>
+
+                                    <?php
+
+                                    $get_p_category = "select * from product_categories";
+                                    $run_p_category = mysqli_query($con, $get_p_category);
+
+                                    while ($p_cat_row = mysqli_fetch_array($run_p_category)) {
+
+                                        $p_cat_id = $p_cat_row['p_cat_id'];
+                                        $p_cat_title = $p_cat_row['p_cat_title'];
+
+                                        echo "
+                                        
+                                        <option value='$p_cat_id'>$p_cat_title</option>  
+                                        
+                                    
+                                        ";
+                                    }
+
+                                    ?>
+
+                                </select>
+                            </div>
+                        </div>
+
+                        
                         <div class="form-group">
                             <label class="col-md-3 control-label">Product Image # 1</label>
 
@@ -197,9 +198,11 @@ include("auth_check.php");
                         </div>
 
                         <div class="form-group">
-                            <label for="size" class="col-md-3 control-label">Size:</label>
+                            <label for="sizes" class="col-md-3 control-label">Size:
+                                
+                            </label>
                             <div class="col-md-6">
-                            <select class="form-control" id="size" name="size" required>
+                            <select class="form-control" id="sizes" name="sizes[]" multiple required>
                                 <option value="S">S</option>
                                 <option value="M">M</option>
                                 <option value="L">L</option>
@@ -216,6 +219,7 @@ include("auth_check.php");
                                 <option value="42">42</option>
                             </select>
                             </div>
+                            
                         </div>
 
                         <div class="form-group">
@@ -254,9 +258,10 @@ include("auth_check.php");
 
      <!-- toast -->
      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
- 
-
-
+     <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+     <script>
+    new MultiSelectTag('sizes')  // id
+</script>
 </body>
 
 </html>
@@ -276,7 +281,11 @@ if (isset($_POST['submit'])) {
     $product_desc = $_POST['product_desc'];
     $product_code = $_POST['product_Code'];
     $product_color = $_POST['product_Color'];
-    $product_size = $_POST['size'];
+    
+    $product_size = implode(',', $_POST['sizes']);
+  
+
+
     $product_stock_qty = $_POST['product_stock'];
     $discount_percent = $_POST['discount_percent'];
 
@@ -331,10 +340,13 @@ if (isset($_POST['submit'])) {
                 }
             }).showToast();
 
+            event.preventDefault();
+
+
             // Redirect to 'insert-product.php' after 2 seconds
             setTimeout(function () {
                 window.open('insert-product.php', '_self');
-            }, 2000);
+            }, 1000);
         </script>";
         } else {
             // Handle the case where the product variations insertion failed

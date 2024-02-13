@@ -11,8 +11,15 @@ if (isset($_GET['product_id']) && isset($_GET['color'])) {
 
     if ($run_sizes_query) {
         $sizes = array();
+
+        
         while ($row = mysqli_fetch_assoc($run_sizes_query)) {
-            $sizes[] = $row['size'];
+            $sizes_in_row = explode(',', $row['size']);
+    
+                    // Append the sizes from this row to the main $sizes array
+                    foreach ($sizes_in_row as $size) {
+                        $sizes[] = $size;
+                    }
         }
 
         // Return sizes in JSON format
