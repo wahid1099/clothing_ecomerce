@@ -45,6 +45,10 @@ include("header.php");
                     <div class="switch-login">
                         <a href="register.php" class="or-login">Or Create An Account</a>
                     </div>
+                    <div class="switch-login">
+                        <a href="reset_email.php" class="or-login">Reset Password</a>
+                    </div>
+
                 </div>
             </div>
         </div>

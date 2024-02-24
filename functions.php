@@ -86,7 +86,7 @@ function getWProduct()
 {
     global $db;
 
-    $get_products = "select * from products where  p_cat_id=1 order by RAND() LIMIT 7";
+    $get_products = "select * from products where  cat_id=15 order by RAND() LIMIT 7";
     $run_products = mysqli_query($db, $get_products);
 
 
@@ -130,7 +130,7 @@ function getMProduct()
 {
     global $db;
 
-    $get_products = "select * from products where p_cat_id=3 order by RAND() LIMIT 7";
+    $get_products = "select * from products where cat_id=1 order by RAND() LIMIT 7";
     $run_products = mysqli_query($db, $get_products);
 
 
@@ -200,20 +200,20 @@ function getCat()
 
     global $db;
 
-    $get_cats = "select * from product_categories";
+    $get_cats = "select * from category";
     $run_cats = mysqli_query($db, $get_cats);
 
 
 
     while ($row_cats = mysqli_fetch_array($run_cats)) {
 
-        $cat_id = $row_cats['p_cat_id'];
-        $cat_title = $row_cats['p_cat_title'];
+        $cat_id = $row_cats['cat_id'];
+        $cat_title = $row_cats['cat_title'];
 
 
         echo "
 
-        <li class='hovclass'><a href='shop.php?p_cat_id=$cat_id'>$cat_title</a></li>
+        <li class='hovclass'><a href='shop.php?cat_id=$cat_id'>$cat_title</a></li>
 
         ";
     }
@@ -462,7 +462,7 @@ function getProd()
             }
            
            echo" <ul class='pd-tags'>
-           <li><span>CATEGORY</span>: $p_cat_name</li>
+           <li><span>Brand</span>: $p_cat_name</li>
        </ul>";
 
         // Display product variations
@@ -470,7 +470,7 @@ function getProd()
         <!-- Product variations -->
         <div class='col-lg-12' style='margin:0'>
             <p>Available Sizes and Colors:</p>
-            <div class='product-variations' style='display:flex'>";
+            <div class='product-variations' style='display:flex;gap: 10px;'>";
 
         // Loop through the array of variations to display
         foreach ($variationsArray as $variation) {
@@ -480,16 +480,13 @@ function getProd()
 
             // Display variation information (you can customize this as needed)
             echo "
-                <div class='variation-item ' >
-                    <div class='product-thumbs '>
-                        <div class='product-thumbs-track ps-slider owl-carousel'>
-                            <div class='pt active' data-imgbigurl='img/products/$imageUrl'>
-                                <img src='img/products/$imageUrl' alt='$product_title' class='small-image'>
-                                <p class='text-center'>$color</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>";
+            
+            <div  data-imgbigurl='img/products/$imageUrl'>
+                <img src='img/products/$imageUrl' alt='$product_title' class='small-image'>
+                <p id='colorName' class='text-center'> $color</p>
+
+            
+        </div>";
         }
 
         echo "

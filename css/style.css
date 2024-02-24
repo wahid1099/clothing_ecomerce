@@ -3216,12 +3216,20 @@ ol {
     padding-left: 15px;
     padding-right: 15px;
   }
+  .small-image {
+    width: 40px !important;
+    height: 50px !important;
+  }
 }
 
 @media (max-width: 767px) {
   .product-thumbs .pt img {
     width: 250px; /* Make the image fill the container width */
     height: auto; /* Maintain the aspect ratio */
+  }
+  .small-image {
+    width: 40px !important;
+    height: 50px !important;
   }
 }
 .product-thumbs .pt img {
@@ -3230,6 +3238,6 @@ ol {
 }
 
 .small-image {
-  width: 200px !important;
-  height: 80px !important;
+  width: 60px;
+  height: 80px;
 }

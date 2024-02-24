@@ -12,6 +12,7 @@ function openupdateCategoryModal(catid) {
       $("#updatecattitle").val(data.cat_title);
       $("#updatedesc").val(data.cat_desc);
       $("#updateCatId").val(data.cat_id);
+      $("#categoryimgpreview").attr("src", "../img/" + data.image_url);
     },
   });
 }

@@ -56,6 +56,11 @@ if (!$result) {
                         <label for="cat_desc">Category Description:</label>
                         <input type="text" class="form-control" id="cat_desc" name="cat_desc" required>
                     </div>
+
+                    <div class="form-group">
+                        <label for="image">Category Image:</label>
+                        <input type="file" class="form-control-file" id="image" name="image" accept="image/*" required>
+                    </div>
                     
                     
                     <!-- End of your form content -->
@@ -86,6 +91,7 @@ if (!$result) {
             <th scope="col">Category ID</th>
             <th scope="col">Category Name</th>
             <th scope="col">Category Description</th>
+            <th scope="col">Category Image</th>
             <th scope="col">Action</th>
            
           
@@ -99,11 +105,14 @@ if (!$result) {
 
         // Loop through the orders and display them in the table
         while ($row = mysqli_fetch_assoc($result)) {
+            $imagePath = '../img/' . $row['image_url'];
+
             
             echo '<tr>';
             echo '<td>' . $row['cat_id'] . '</td>';
             echo '<td>' . $row['cat_title'] . '</td>';
             echo '<td>' . $row['cat_desc'] . '</td>';
+            echo '<td><img src="' . $imagePath . '" alt="Category Image" style="max-width: 100px;"></td>';
             echo '<td>';
             echo '<button type="button" class="btn btn-danger " data-toggle="modal" data-target="#deletecategoryModal' . $row['cat_id'] . '">Delete</button>
             <button type="button" class="btn btn-warning" style="margin: 10px;"  onclick="openupdateCategoryModal(' . $row['cat_id'] . ')"  data-toggle="modal" data-target="#updateCategoryModal">Update</button>';

@@ -18,14 +18,15 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="updatetitle">Category Title</label>
-                        <input type="text" class="form-control" id="updatetitle" name="updateColor" required>
+                        <label for="updateColor">Stock Title</label>
+                        <input type="text" class="form-control" id="updateColor" name="updateColor" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="updateStockQuantity">Category Description</label>
+                        <label for="updateStockQuantity">Stock Description</label>
                         <input type="number" class="form-control" id="updateStockQuantity" name="updateStockQuantity" required>
                     </div>
+
 
                    
 
@@ -68,6 +69,14 @@
                         <label for="updatedesc">Category Description</label>
                         <input type="text" class="form-control" id="updatedesc" name="updatedesc" required>
                     </div>
+
+                       <!-- Image 1 -->
+                       <div class="form-group">
+                        <label for="updatecategoryimage">Category Image : </label>
+                        <img id="categoryimgpreview" src="" alt="Category Image" style="max-width: 100px;">
+                        <input type="file" class="form-control-file" id="updatecategoryimage" name="updatecategoryimage">
+                    </div>
+
 
             
                     <input type="hidden" id="updateCatId" name="updateCatId">
@@ -116,6 +125,8 @@
                         <label for="updatesubctgdesc">Sub-Category Description</label>
                         <input type="text" class="form-control" id="updatesubctgdesc" name="updatesubctgdesc" required>
                     </div>
+
+
 
             
                     <input type="hidden" id="updatesubCatId" name="updatesubCatId">

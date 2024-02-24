@@ -20,16 +20,16 @@ function sendOrderConfirmationEmail($con, $order_id, $customer_name, $customer_e
     try {
         // Server settings
         $mail->isSMTP();
-        $mail->Host       = 'mail.poshak-bd.com';
+        $mail->Host       = $_ENV['DB_HOST'];
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'support@poshak-bd.com'; // Replace with your Gmail address
-        $mail->Password   = 'uFNedE}5rZl^'; // Replace with your Gmail password
-        $mail->SMTPSecure = 'ssl';
-        $mail->Port       = 465;
+        $mail->Username   = $_ENV['DB_USER']; // Replace with your Gmail address
+        $mail->Password   = $_ENV['DB_PASSWORD']; // Replace with your Gmail password
+        $mail->SMTPSecure = 'tls';
+        $mail->Port       = 587;
 
         // Recipients
-        $mail->setFrom('codemen.wahid@gmail.com', 'POSHAK BD');
-        $mail->addAddress('wahidahmed890@gmail.com');
+        $mail->setFrom('support@poshak-bd.com', 'POSHAK BD');
+        $mail->addAddress('poshaklifestyle0@gmail.com');
 
         // Content
         $mail->isHTML(true);
