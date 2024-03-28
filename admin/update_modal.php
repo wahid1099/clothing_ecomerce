@@ -18,12 +18,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="updateColor">Stock Title</label>
+                        <label for="updateColor">Stock Color</label>
                         <input type="text" class="form-control" id="updateColor" name="updateColor" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="updateStockQuantity">Stock Description</label>
+                        <label for="updateStockQuantity">Stock Quantity</label>
                         <input type="number" class="form-control" id="updateStockQuantity" name="updateStockQuantity" required>
                     </div>
 

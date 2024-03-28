@@ -185,7 +185,7 @@ include("auth_check.php");
                             <label class="col-md-3 control-label">Product Color</label>
 
                             <div class="col-md-6">
-                                <input type="text" class="form-control" name="product_Color" required>
+                                <input type="text" class="form-control" name="product_colors" required>
                             </div>
                         </div>
 
@@ -266,7 +266,6 @@ include("auth_check.php");
 
 </html>
 
-
 <?php
 
 if (isset($_POST['submit'])) {
@@ -280,12 +279,10 @@ if (isset($_POST['submit'])) {
     $product_keywords = $_POST['product_keywords'];
     $product_desc = $_POST['product_desc'];
     $product_code = $_POST['product_Code'];
-    $product_color = $_POST['product_Color'];
+    $product_color = $_POST['product_colors'];
     
     $product_size = implode(',', $_POST['sizes']);
   
-
-
     $product_stock_qty = $_POST['product_stock'];
     $discount_percent = $_POST['discount_percent'];
 
@@ -302,59 +299,75 @@ if (isset($_POST['submit'])) {
     $temp_name1 = $_FILES['product_img1']['tmp_name'];
     $temp_name2 = $_FILES['product_img2']['tmp_name'];
 
-   
-
     // Move the uploaded files
     move_uploaded_file($temp_name1, $uploadDirectory . $product_img1);
     move_uploaded_file($temp_name2, $uploadDirectory . $product_img2);
 
+    // Prepare main product insertion statement
+    $insert_product = "INSERT INTO products (p_cat_id, cat_id, date, product_title, product_img1, product_img2, product_price, product_keywords, product_desc, product_code, discount_percentage) VALUES (?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($con, $insert_product);
+    
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, "iisssssssd", $p_cat_id, $cat_id, $product_title, $product_img1, $product_img2, $product_price, $product_keywords, $product_desc, $product_code, $discount_percent);
+    
+        $result = mysqli_stmt_execute($stmt);
+    
+        if ($result) {
+            $product_id = mysqli_insert_id($con);
+        
+            // Prepare product variations insertion statement
+            $insert_variations = "INSERT INTO product_variations (products_id, color, size, stock_quantity, image_url) VALUES (?, ?, ?, ?, ?)";
+            $stmt_variations = mysqli_prepare($con, $insert_variations);
+            
+            if ($stmt_variations) {
+                mysqli_stmt_bind_param($stmt_variations, "issss", $product_id, $product_color, $product_size, $product_stock_qty, $product_img1);
+                
+                $result_variations = mysqli_stmt_execute($stmt_variations);
+                
+                if ($result_variations) {
+                    // Product variations inserted successfully
+                    
+                    // Show Toastify notification for success
+                    echo "<script>
+                        Toastify({
+                            text: 'Product Inserted with Variations',
+                            duration: 3000,
+                            newWindow: true,
+                            close: true,
+                            gravity: 'top', // `top` or `bottom`
+                            position: 'right', // `left`, `center` or `right`
+                            backgroundColor: '#65B741', // Green color for success
+                            onClick: function () {
+                                // Callback after click, you can redirect or perform additional actions here
+                            }
+                        }).showToast();
 
+                        event.preventDefault();
 
-    $insert_product = "Insert into products (p_cat_id,cat_id,date,product_title,product_img1,product_img2,product_price,product_keywords,product_desc,product_code,	discount_percentage)
-    values ('$p_cat_id','$cat_id',NOW(),'$product_title','$product_img1','$product_img2','$product_price','$product_keywords','$product_desc','$product_code',' $discount_percent')";
-
-    $run_insert_product = mysqli_query($con, $insert_product);
-
-   
-
-    if ($run_insert_product) {
-        $product_id = mysqli_insert_id($con);
-
-        $run_insert_variations = "INSERT INTO product_variations (products_id, color, size, stock_quantity,image_url)
-        VALUES ('$product_id', '$product_color', '$product_size', '$product_stock_qty', '$product_img1')";
-        $run_insert_variations_result = mysqli_query($con, $run_insert_variations);
-
-        if ($run_insert_variations_result) {
-            // Show Toastify notification for success
-            echo "<script>
-                    Toastify({
-                        text: 'Product Inserted with Variations',
-                        duration: 3000,
-                        newWindow: true,
-                        close: true,
-                gravity: 'top', // `top` or `bottom`
-                position: 'right', // `left`, `center` or `right`
-                backgroundColor: '#65B741', // Green color for success
-                onClick: function () {
-                    // Callback after click, you can redirect or perform additional actions here
+                        // Redirect to 'insert-product.php' after 2 seconds
+                        setTimeout(function () {
+                            window.open('insert-product.php', '_self');
+                        }, 1000);
+                    </script>";
+                } else {
+                    // Handle insertion failure
+                    echo "Error: " . mysqli_error($con);
                 }
-            }).showToast();
-
-            event.preventDefault();
-
-
-            // Redirect to 'insert-product.php' after 2 seconds
-            setTimeout(function () {
-                window.open('insert-product.php', '_self');
-            }, 1000);
-        </script>";
+                
+                mysqli_stmt_close($stmt_variations);
+            } else {
+                // Handle prepared statement creation failure
+                echo "Error: " . mysqli_error($con);
+            }
         } else {
-            // Handle the case where the product variations insertion failed
+            // Handle insertion failure
             echo "Error: " . mysqli_error($con);
         }
-        } else {
-        // Handle the case where the main product insertion failed
+        
+        mysqli_stmt_close($stmt);
+    } else {
+        // Handle prepared statement creation failure
         echo "Error: " . mysqli_error($con);
-        }
     }
+}
 ?>
